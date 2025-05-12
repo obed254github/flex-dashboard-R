@@ -1,0 +1,15 @@
+flexdashboard
+tidyverse
+plotly
+ggplot2
+skimr
+scales
+flextable
+mice
+naniar
+gt
+magick
+grid
+lubridate
+gtExtras
+maps
