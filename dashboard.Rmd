@@ -7,7 +7,7 @@ output:
     vertical_layout: fill
     css: "style.css"
     self-contained: TRUE
-runtime: shiny
+# runtime: shiny
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
@@ -29,16 +29,16 @@ library(maps)
 ```
 
 ```{r data, include=FALSE}
-#Loading census and election data
+# Loading census and election data
 census_data <- read.csv("https://raw.githubusercontent.com/dilernia/STA418-518/main/Data/census_data_state_2008-2023.csv")
 elections_data <- read_csv("data/countypres_2000-2020.csv")
-#creating a categorical variable named social wealth class which groups the proportions of poverty.
+# creating a categorical variable named social wealth class which groups the proportions of poverty.
 lower <- min(census_data$prop_poverty, na.rm = TRUE)
 upper <- max(census_data$prop_poverty, na.rm = TRUE)
 range_width <- upper - lower
 break1 <- lower + range_width / 3
 break2 <- lower + 2 * range_width / 3
-census_data <- census_data |> 
+census_data <- census_data |>
   mutate(
     social_wealth_class = case_when(
       prop_poverty <= break1 ~ "Upper Class",
@@ -76,7 +76,8 @@ ggplotly(m, tooltip = c("x", "y", "color", "size")) |>
   layout(
     legend = list(
       title = list(
-        text = "Wealth Class"),
+        text = "Wealth Class"
+      ),
       orientation = "h",
       x = 0.7,
       xanchor = "right",
@@ -88,22 +89,22 @@ ggplotly(m, tooltip = c("x", "y", "color", "size")) |>
 ### Top 10 states with high rent and home ownership cost
 
 ```{r}
-bar_plot <- census_data |> 
-  group_by(county_state) |> 
+bar_plot <- census_data |>
+  group_by(county_state) |>
   summarize(
     average_monthly_home_cost = mean(median_monthly_home_cost, na.rm = TRUE),
     average_monthly_rent = mean(median_monthly_rent_cost, na.rm = TRUE)
-  ) |> 
-  ungroup() |> 
-  arrange(desc(average_monthly_home_cost)) |> 
-  slice_head(n = 10) |> 
+  ) |>
+  ungroup() |>
+  arrange(desc(average_monthly_home_cost)) |>
+  slice_head(n = 10) |>
   pivot_longer(
     cols = c(average_monthly_home_cost, average_monthly_rent),
     names_to = "cost_type",
     values_to = "value"
-  ) |> 
-  mutate(county_state = factor(county_state, levels = unique(county_state)))|>
-  ggplot( aes(x = county_state, y = value, fill = cost_type)) +
+  ) |>
+  mutate(county_state = factor(county_state, levels = unique(county_state))) |>
+  ggplot(aes(x = county_state, y = value, fill = cost_type)) +
   geom_bar(stat = "identity", position = "dodge") +
   scale_fill_viridis_d() +
   labs(
@@ -121,7 +122,9 @@ ggplotly(bar_plot, tooltip = c("x", "y", "fill")) |>
   layout(
     legend = list(
       title = list(
-        text = "Wealth Class"))
+        text = "Wealth Class"
+      )
+    )
   )
 ```
 
@@ -142,10 +145,10 @@ population_plot <- ggplot(population_data, aes(x = year, y = population)) +
   scale_y_continuous(labels = scales::comma) +
   scale_x_continuous(breaks = unique(census_data$year)) +
   labs(
-    x = " ", 
+    x = " ",
     y = "Population",
     caption = "Data Source: TidyCensus R & United States Census website"
-  )+ 
+  ) +
   theme_minimal() +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1)
@@ -195,7 +198,7 @@ labels <- merged_data |>
   )
 
 wealth_classes <- ggplot(merged_data, aes(x = long, y = lat, group = group, fill = candidate, text = region)) +
-  geom_polygon(color = "black", size = 0.3) + 
+  geom_polygon(color = "black", size = 0.3) +
   coord_fixed(1.3) +
   scale_fill_manual(
     values = c("DONALD TRUMP" = "#B22234", "HILLARY CLINTON" = "#002147"),
@@ -214,6 +217,6 @@ wealth_classes <- ggplot(merged_data, aes(x = long, y = lat, group = group, fill
     inherit.aes = FALSE
   )
 
-#Convertubg to interactive plot
+# Convertubg to interactive plot
 ggplotly(wealth_classes, tooltip = c("text", "fill"))
 ```
